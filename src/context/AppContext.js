@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from 'react';
-import ExpenseTotal from '../components/ExpenseTotal';
+
 
 // 5. The reducer - this is used to update the state, based on the action
 export const AppReducer = (state, action) => {
@@ -44,15 +44,16 @@ export const AppReducer = (state, action) => {
                 };
                 case 'DECREASE_BY_10':
                     const updatedExpenses = state.expenses.map((currentExp) => {
-                        if (currentExp.name === action.payload) {
-                            const updatedCost = currentExp.cost - 10;
-                            budget = state.budget + (currentExp.cost - updatedCost);
-                            return { ...currentExp, cost: updatedCost };
+                        if (currentExp.id === action.payload) {
+                            return { ...currentExp, cost: currentExp.cost - 10 };
                         }
                         return currentExp;
                     });
                 
+                    // Calculate new total expenses after reduction
                     const updatedExpenseTotal = updatedExpenses.reduce((total, expense) => total + expense.cost, 0);
+                
+                    // Calculate the new remaining budget
                     const updatedRemaining = state.budget - updatedExpenseTotal;
                 
                     return {
@@ -60,15 +61,8 @@ export const AppReducer = (state, action) => {
                         expenses: updatedExpenses,
                         ExpenseTotal: updatedExpenseTotal,
                         remaining: updatedRemaining,
-                        budget: budget 
                     };
                 
-            action.type = "DONE";
-            return {
-                ...state,
-                budget
-              
-            };
         case 'SET_BUDGET':
             action.type = "DONE";
             state.budget = action.payload;
